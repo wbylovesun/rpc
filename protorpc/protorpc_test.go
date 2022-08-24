@@ -9,11 +9,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/wbylovesun/rpc"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
-	"wbylovesun/rpc"
 )
 
 const jsonContentType = "application/json; charset=utf-8"
