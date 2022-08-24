@@ -7,10 +7,10 @@ package main
 
 import (
 	"flag"
+	"github.com/wbylovesun/rpc"
+	"github.com/wbylovesun/rpc/json"
 	"log"
 	"net/http"
-	"wbylovesun/rpc"
-	"wbylovesun/rpc/json"
 )
 
 type Counter struct {
