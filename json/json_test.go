@@ -75,7 +75,7 @@ type Service1Request struct {
 type Service1NoParamsRequest struct {
 	V  string `json:"jsonrpc"`
 	M  string `json:"method"`
-	ID uint64 `json:"id"`
+	ID string `json:"id"`
 }
 
 type Service1ParamsArrayRequest struct {
@@ -84,7 +84,7 @@ type Service1ParamsArrayRequest struct {
 		T string
 	} `json:"params"`
 	M  string `json:"method"`
-	ID uint64 `json:"id"`
+	ID string `json:"id"`
 }
 
 type Service1Response struct {
@@ -172,7 +172,7 @@ func TestService(t *testing.T) {
 
 	// No parameters.
 	res = Service1Response{}
-	if err := executeRaw(t, s, &Service1NoParamsRequest{"2.0", "Service1/multiply", 1}, &res); err != nil {
+	if err := executeRaw(t, s, &Service1NoParamsRequest{"2.0", "Service1/multiply", "1"}, &res); err != nil {
 		t.Error(err)
 	}
 	if res.Result != Service1DefaultResponse {
@@ -189,7 +189,7 @@ func TestService(t *testing.T) {
 			T: "test",
 		}},
 		M:  "Service1/multiply",
-		ID: 1,
+		ID: "1",
 	}
 	if err := executeRaw(t, s, &req, &res); err != nil {
 		t.Error(err)
@@ -231,7 +231,7 @@ func TestServiceWithErrorMapper(t *testing.T) {
 	s.RegisterService(new(Service1), "")
 
 	var res Service1Response
-	if err := execute(t, s, "Service1.MappedResponseError", &Service1Request{4, 2}, &res); err == nil {
+	if err := execute(t, s, "Service1/mappedResponseError", &Service1Request{4, 2}, &res); err == nil {
 		t.Errorf("Expected to get a JSON-RPC error, but got nil")
 	} else if jsonRpcErr, ok := err.(*Error); !ok {
 		t.Errorf("Expected to get an *Error, but got %T: %s", err, err)
@@ -242,7 +242,7 @@ func TestServiceWithErrorMapper(t *testing.T) {
 	}
 
 	// Unmapped error behaves as usual
-	if err := execute(t, s, "Service1.ResponseError", &Service1Request{4, 2}, &res); err == nil {
+	if err := execute(t, s, "Service1/responseError", &Service1Request{4, 2}, &res); err == nil {
 		t.Errorf("Expected to get a JSON-RPC error, but got nil")
 	} else if jsonRpcErr, ok := err.(*Error); !ok {
 		t.Errorf("Expected to get an *Error, but got %T: %s", err, err)
@@ -270,7 +270,7 @@ func TestServiceWithErrorMapper(t *testing.T) {
 }
 
 func TestDecodeNullResult(t *testing.T) {
-	data := `{"jsonrpc": "2.0", "id": 12345, "result": null}`
+	data := `{"jsonrpc": "2.0", "id": "12345", "result": null}`
 	reader := bytes.NewReader([]byte(data))
 	var result interface{}
 
